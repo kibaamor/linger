@@ -6,12 +6,12 @@ int main()
     init_syslib();
 
     struct sockaddr_in addr = { 0 };
-    KCHECK_ERRNO(init_addr("127.0.0.1", 8888, &addr));
+    KCHECK_ERRNO(init_addr("192.168.50.102", 8888, &addr));
 
     SOCKET sockfd;
     KCHECK_ERRNO(sockfd = socket(AF_INET, SOCK_STREAM, 0));
 
-    int set_size = 10240;
+    int set_size = 64256 * 3;
     int get_size = setget_socket_bufsize(sockfd, true, set_size);
     if (get_size != set_size) {
         klog("set send buffer size failed. set: %d, get: %d\n", set_size, get_size);
@@ -30,7 +30,7 @@ int main()
 
     klog("client: connected\n");
 
-    char buf[10240] = { 0 };
+    char buf[64256 * 3] = { 0 };
     for (int i = 0; i < 1; ++i) {
         int ret = send(sockfd, buf, sizeof(buf), 0);
         klog("send: %d => %d\n", i, ret);
@@ -41,7 +41,9 @@ int main()
     }
 
     klog("client: closing socket ...\n");
-    closesocket(sockfd);
+    int ret = closesocket(sockfd);
+    int en = errno;
+    klog("client: closesocket return %d(%d)\n", ret, en);
     klog("client: closed socket!\n");
 
     return 0;
