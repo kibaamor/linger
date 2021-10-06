@@ -8,7 +8,7 @@ int main()
     struct sockaddr_in addr = { 0 };
     KCHECK_ERRNO(init_addr("127.0.0.1", 8888, &addr));
 
-    int sockfd = 0;
+    SOCKET sockfd;
     KCHECK_ERRNO(sockfd = socket(AF_INET, SOCK_STREAM, 0));
 
     int set_size = 10240;
@@ -21,7 +21,7 @@ int main()
 #if 1
     struct linger l_opt;
     l_opt.l_onoff = 1;
-    l_opt.l_linger = 0;
+    l_opt.l_linger = 3;
     KCHECK_ERRNO(
         setsockopt(sockfd, SOL_SOCKET, SO_LINGER, (void*)&l_opt, sizeof(l_opt)));
 #endif
@@ -31,7 +31,7 @@ int main()
     klog("client: connected\n");
 
     char buf[10240] = { 0 };
-    for (int i = 0; i <= 3278; ++i) {
+    for (int i = 0; i < 1; ++i) {
         int ret = send(sockfd, buf, sizeof(buf), 0);
         klog("send: %d => %d\n", i, ret);
         if (ret == -1) {

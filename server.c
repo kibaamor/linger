@@ -41,9 +41,9 @@ int main()
         }
         klog("total recv: %d\n", total);
 
-        klog("client: closing socket ...\n");
+        klog("server: closing socket ...\n");
         closesocket(client_sockfd);
-        klog("client: closed socket!\n");
+        klog("server: closed socket!\n");
     }
 
     return 0;
